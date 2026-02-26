@@ -10,6 +10,18 @@ import {
   selectSeatsError,
 } from "../../features/seats/seatsSlice";
 
+// ─── БРЕНД АКТИВ-БАНКА ────────────────────────────────────────────────────
+const BRAND = {
+  red:        "#E31E24",   // Актив-Ориент Красный
+  redDark:    "#c01a1f",   // hover
+  white:      "#ffffff",
+  bg:         "#f5f5f5",
+  gray:       "#c5c6c6",   // серый из палитры
+  textMain:   "#000000",
+  textSub:    "#6b7280",
+  font:       "inherit",
+};
+
 const SEAT_COLORS = {
   STANDARD: "#f59e0b",
   COMFORT:  "#3b82f6",
@@ -51,7 +63,7 @@ function Skeleton() {
           {[...Array(14)].map((_, j) => (
             <div key={j} style={{
               width: 18, height: 16, borderRadius: 3,
-              background: "#f3f4f6",
+              background: BRAND.gray,
               animation: "pulse 1.5s infinite",
               animationDelay: `${(i + j) * 0.03}s`,
             }} />
@@ -73,7 +85,7 @@ function Seat({ seat, isSelected, onToggle, priceData, limitReached, scale }) {
 
   let color;
   if (booked)          color = "#d1d5db";
-  else if (isSelected) color = "#22c55e";
+  else if (isSelected) color = BRAND.red;   // выбрано — красный бренд
   else                 color = getSeatColor(seat.seatType);
 
   const size = Math.max(10, 22 * scale);
@@ -117,14 +129,15 @@ function Seat({ seat, isSelected, onToggle, priceData, limitReached, scale }) {
           top: -10,
           left: "50%",
           transform: "translateX(-50%)",
-          background: "#22c55e",
-          color: "#fff",
+          background: BRAND.red,
+          color: BRAND.white,
           fontSize: 8,
           fontWeight: 700,
           borderRadius: 3,
           padding: "1px 3px",
           whiteSpace: "nowrap",
           zIndex: 10,
+          fontFamily: BRAND.font,
         }}>
           {seat.place}
         </div>
@@ -144,7 +157,7 @@ function Legend({ priceData }) {
       {priceData.map((p) => (
         <div key={p.seatType} style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <SeatIcon color={getSeatColor(p.seatType)} size={16} />
-          <span style={{ fontSize: 12, color: "#374151", fontWeight: 500 }}>
+          <span style={{ fontSize: 12, color: BRAND.textMain, fontWeight: 500, fontFamily: BRAND.font }}>
             {p.name} — {p.price} {p.currencyCode}
           </span>
         </div>
@@ -155,11 +168,11 @@ function Legend({ priceData }) {
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 9, color: "#9ca3af", fontWeight: 700,
         }}>✕</div>
-        <span style={{ fontSize: 12, color: "#374151", fontWeight: 500 }}>Занято</span>
+        <span style={{ fontSize: 12, color: BRAND.textMain, fontWeight: 500, fontFamily: BRAND.font }}>Занято</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        <SeatIcon color="#22c55e" size={16} />
-        <span style={{ fontSize: 12, color: "#374151", fontWeight: 500 }}>Выбрано</span>
+        <SeatIcon color={BRAND.red} size={16} />
+        <span style={{ fontSize: 12, color: BRAND.textMain, fontWeight: 500, fontFamily: BRAND.font }}>Выбрано</span>
       </div>
     </div>
   );
@@ -171,7 +184,6 @@ function HallCanvas({ seats, selectedSeats, onToggle, priceData, limitReached, m
   const containerRef = useRef(null);
   const [scale, setScale] = useState(1);
 
-  // Фильтруем только реальные места с координатами
   const validSeats = seats.filter(
     (s) => s.objectType === "seat" && s.left && s.top
   );
@@ -191,17 +203,9 @@ function HallCanvas({ seats, selectedSeats, onToggle, priceData, limitReached, m
   return (
     <div
       ref={containerRef}
-      style={{
-        width: "100%",
-        overflowX: "hidden",
-        overflowY: "auto",
-      }}
+      style={{ width: "100%", overflowX: "hidden", overflowY: "auto" }}
     >
-      <div style={{
-        position: "relative",
-        width: "100%",
-        height: canvasH,
-      }}>
+      <div style={{ position: "relative", width: "100%", height: canvasH }}>
         {validSeats.map((seat) => {
           const x = Number(seat.left) * scale;
           const y = Number(seat.top)  * scale;
@@ -307,8 +311,8 @@ export default function HallPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#ffffff",
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      background: BRAND.bg,            // фон #f5f5f5
+      fontFamily: BRAND.font,
       maxWidth: 480,
       margin: "0 auto",
       position: "relative",
@@ -323,42 +327,66 @@ export default function HallPage() {
           from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
+        .buy-btn:hover { background: ${BRAND.redDark} !important; }
+        .retry-btn:hover { color: ${BRAND.redDark} !important; }
+        .session-card:hover { opacity: 0.9; }
       `}</style>
 
       {/* ── Тост лимита ── */}
       {limitWarning && (
         <div style={{
           position: "fixed", top: 16, left: "50%",
-          background: "#1f2937", color: "#fff",
+          background: BRAND.textMain,
+          color: BRAND.white,
           borderRadius: 10, padding: "10px 20px",
           fontSize: 13, fontWeight: 600, zIndex: 300,
-          boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
           animation: "fadeInDown 0.2s ease",
           whiteSpace: "nowrap",
+          fontFamily: BRAND.font,
         }}>
           Максимум {MAX_TICKETS} билетов за один раз
         </div>
       )}
 
-      {/* ── Шапка ── */}
+      {/* ── Шапка — белая ── */}
       <div style={{
-        background: "#f5f5f5",
+        background: BRAND.white,
         padding: "16px 16px 20px",
-        borderBottom: "1px solid #e5e7eb",
+        borderBottom: `3px solid ${BRAND.red}`,   // красная линия под шапкой
       }}>
         <div style={{ display: "flex", alignItems: "center", marginBottom: 6 }}>
           <div
             onClick={() => navigate(-1)}
-            style={{ fontSize: 22, color: "#6b7280", cursor: "pointer", paddingRight: 8 }}
+            style={{
+              fontSize: 22,
+              color: BRAND.red,
+              cursor: "pointer",
+              paddingRight: 8,
+              fontWeight: 700,
+              lineHeight: 1,
+            }}
           >←</div>
-          <div style={{ flex: 1, fontWeight: 700, fontSize: 18, color: "#111827" }}>
+          <div style={{
+            flex: 1,
+            fontWeight: 700,
+            fontSize: 18,
+            color: BRAND.textMain,
+            fontFamily: BRAND.font,
+          }}>
             {movieTitle}
           </div>
         </div>
-        <div style={{ color: "#9ca3af", fontSize: 14, marginBottom: sessions.length ? 16 : 0 }}>
+        <div style={{
+          color: BRAND.textSub,
+          fontSize: 14,
+          marginBottom: sessions.length ? 16 : 0,
+          fontFamily: BRAND.font,
+        }}>
           {sessionDate}
         </div>
 
+        {/* Сеансы */}
         {sessions.length > 0 && (
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             {sessions.map((s) => {
@@ -366,22 +394,38 @@ export default function HallPage() {
               return (
                 <div
                   key={s.sessionId}
+                  className="session-card"
                   onClick={() => { setActiveSessionId(s.sessionId); setSelectedSeats([]); }}
                   style={{
                     cursor: "pointer",
-                    background: active ? "#22c55e" : "#e5e7eb",
-                    borderRadius: 10, padding: "8px 16px",
-                    textAlign: "center", minWidth: 76,
-                    transition: "background 0.15s",
+                    background: active ? BRAND.red : BRAND.bg,
+                    border: `2px solid ${active ? BRAND.red : BRAND.gray}`,
+                    borderRadius: 10,
+                    padding: "8px 16px",
+                    textAlign: "center",
+                    minWidth: 76,
+                    transition: "background 0.15s, border-color 0.15s",
+                    fontFamily: BRAND.font,
                   }}
                 >
-                  <div style={{ fontWeight: 800, fontSize: 18, color: active ? "#fff" : "#111827" }}>
+                  <div style={{
+                    fontWeight: 800,
+                    fontSize: 18,
+                    color: active ? BRAND.white : BRAND.textMain,
+                  }}>
                     {s.sessionTime}
                   </div>
-                  <div style={{ fontSize: 11, color: active ? "rgba(255,255,255,0.85)" : "#6b7280" }}>
+                  <div style={{
+                    fontSize: 11,
+                    color: active ? "rgba(255,255,255,0.85)" : BRAND.textSub,
+                  }}>
                     {s.mediaType}
                   </div>
-                  <div style={{ fontSize: 11, marginTop: 3, color: active ? "rgba(255,255,255,0.75)" : "#9ca3af" }}>
+                  <div style={{
+                    fontSize: 11,
+                    marginTop: 3,
+                    color: active ? "rgba(255,255,255,0.75)" : BRAND.gray,
+                  }}>
                     от {s.minPrice} {s.currencyCode}
                   </div>
                 </div>
@@ -392,9 +436,23 @@ export default function HallPage() {
       </div>
 
       {/* ── Название зала ── */}
-      <div style={{ textAlign: "center", padding: "14px 16px 6px" }}>
-        <div style={{ fontWeight: 700, fontSize: 17, color: "#111827" }}>{locationName}</div>
-        <div style={{ color: "#6b7280", fontSize: 13, marginTop: 2 }}>{hallName}</div>
+      <div style={{ textAlign: "center", padding: "14px 16px 6px", background: BRAND.white }}>
+        <div style={{
+          fontWeight: 700,
+          fontSize: 17,
+          color: BRAND.textMain,
+          fontFamily: BRAND.font,
+        }}>
+          {locationName}
+        </div>
+        <div style={{
+          color: BRAND.textSub,
+          fontSize: 13,
+          marginTop: 2,
+          fontFamily: BRAND.font,
+        }}>
+          {hallName}
+        </div>
       </div>
 
       {/* ── Состояния ── */}
@@ -402,10 +460,20 @@ export default function HallPage() {
 
       {status === "failed" && (
         <div style={{ textAlign: "center", padding: 40 }}>
-          <div style={{ color: "#ef4444", fontSize: 14, marginBottom: 12 }}>{error}</div>
+          <div style={{ color: BRAND.red, fontSize: 14, marginBottom: 12, fontFamily: BRAND.font }}>
+            {error}
+          </div>
           <div
+            className="retry-btn"
             onClick={() => dispatch(fetchSeats({ sessionId: activeSessionId, bookedSeats: -1 }))}
-            style={{ color: "#3b82f6", cursor: "pointer", fontSize: 13 }}
+            style={{
+              color: BRAND.red,
+              cursor: "pointer",
+              fontSize: 13,
+              fontWeight: 600,
+              fontFamily: BRAND.font,
+              transition: "color 0.15s",
+            }}
           >
             Повторить
           </div>
@@ -413,13 +481,19 @@ export default function HallPage() {
       )}
 
       {status === "succeeded" && (
-        <>
+        <div style={{ background: BRAND.white, margin: "0 0 12px", borderRadius: "0 0 12px 12px" }}>
           <Legend priceData={priceData} />
 
-          <div style={{ textAlign: "center", color: "#6b7280", fontSize: 12, marginBottom: 8 }}>
+          <div style={{
+            textAlign: "center",
+            color: BRAND.textSub,
+            fontSize: 12,
+            marginBottom: 8,
+            fontFamily: BRAND.font,
+          }}>
             Осталось мест: {freeCount}
             {limitReached && (
-              <span style={{ color: "#f59e0b", fontWeight: 600, marginLeft: 8 }}>
+              <span style={{ color: BRAND.red, fontWeight: 600, marginLeft: 8 }}>
                 · Выбрано {MAX_TICKETS}/{MAX_TICKETS}
               </span>
             )}
@@ -429,10 +503,16 @@ export default function HallPage() {
           <div style={{ textAlign: "center", margin: "0 20px 8px" }}>
             <div style={{
               height: 14, marginBottom: 3,
-              background: "linear-gradient(180deg, #9ca3af 0%, #d1d5db 100%)",
+              background: `linear-gradient(180deg, ${BRAND.gray} 0%, #000 100%)`,
               borderRadius: "50% 50% 0 0 / 100% 100% 0 0",
             }} />
-            <div style={{ fontSize: 9, color: "#9ca3af", letterSpacing: 4, fontWeight: 600 }}>
+            <div style={{
+              fontSize: 9,
+              color: BRAND.textSub,
+              letterSpacing: 4,
+              fontWeight: 600,
+              fontFamily: BRAND.font,
+            }}>
               ЭКРАН
             </div>
           </div>
@@ -447,32 +527,67 @@ export default function HallPage() {
             mapWidth={mapWidth}
             mapHeight={mapHeight}
           />
-        </>
+        </div>
       )}
 
       {/* ── Панель покупки ── */}
       {selectedSeats.length > 0 && (
         <div style={{
-          position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
-          width: "100%", maxWidth: 480, background: "#1f2937",
-          borderRadius: "16px 16px 0 0", padding: "16px 20px 24px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          boxShadow: "0 -4px 24px rgba(0,0,0,0.18)", zIndex: 100,
+          position: "fixed",
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 480,
+          background: BRAND.white,
+          borderTop: `3px solid ${BRAND.red}`,
+          borderRadius: "16px 16px 0 0",
+          padding: "16px 20px 24px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          // boxShadow: "0 -4px 24px rgba(0,0,0,0.10)",
+          zIndex: 100,
           animation: "slideUp 0.2s ease",
+          fontFamily: BRAND.font,
         }}>
           <div>
-            <div style={{ color: "#fff", fontWeight: 800, fontSize: 24 }}>
+            <div style={{
+              color: BRAND.textMain,
+              fontWeight: 800,
+              fontSize: 24,
+              fontFamily: BRAND.font,
+            }}>
               {total.toFixed(2)} TJS
             </div>
-            <div style={{ color: "#9ca3af", fontSize: 13 }}>
+            <div style={{
+              color: BRAND.textSub,
+              fontSize: 13,
+              fontFamily: BRAND.font,
+            }}>
               За {selectedSeats.length} {selectedSeats.length === 1 ? "билет" : "билетов"}
             </div>
           </div>
-          <button onClick={handleBuy} style={{
-            background: "#22c55e", color: "#fff", border: "none",
-            borderRadius: 12, padding: "14px 32px",
-            fontSize: 16, fontWeight: 700, cursor: "pointer",
-          }}>
+
+          {/* ── КНОПКА КУПИТЬ — красная по брендбуку ── */}
+          <button
+            className="buy-btn"
+            onClick={handleBuy}
+            style={{
+              background: BRAND.red,
+              color: BRAND.white,
+              border: "none",
+              borderRadius: 10,
+              padding: "14px 32px",
+              fontSize: 16,
+              fontWeight: 700,
+              cursor: "pointer",
+              fontFamily: BRAND.font,
+              letterSpacing: 0.3,
+              transition: "background 0.15s",
+              boxShadow: `0 4px 12px rgba(227,30,36,0.35)`,
+            }}
+          >
             Купить
           </button>
         </div>

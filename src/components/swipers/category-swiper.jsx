@@ -41,10 +41,7 @@ export default function CategorySwiper({ onCategorySelect, selectedCategory }) {
 
   const getLabel = (c) => c?.label ?? c?.categoryName ?? "Категория";
 
-  // если хочешь — мемоизируем, чтобы не создавать заново на каждый рендер
-  const getIcon = useMemo(() => {
-    return (c) => pickIconByName(getLabel(c));
-  }, []);
+  
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -63,8 +60,8 @@ export default function CategorySwiper({ onCategorySelect, selectedCategory }) {
               <ButtonBase
                 onClick={() => onCategorySelect?.(category.id)}
                 sx={{
-                  px: 2,
-                  py: 1.25,
+                  px: 1.5,
+                  py: 1,
                   borderRadius: 2,
                   display: "flex",
                   flexDirection: "column",
@@ -79,9 +76,7 @@ export default function CategorySwiper({ onCategorySelect, selectedCategory }) {
                   "&:hover": { bgcolor: isActive ? "primary.dark" : "action.hover" },
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {getIcon(category)}
-                </Box>
+               
 
                 <Typography variant="caption" sx={{ fontWeight: 600, whiteSpace: "nowrap" }}>
                   {getLabel(category)}

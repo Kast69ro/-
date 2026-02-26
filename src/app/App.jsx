@@ -1,30 +1,18 @@
-import { Routes, Route } from "react-router-dom";
-
-import MobileShell from "./providers/MobileShell.jsx";
-
-// import MovieDetailsScreen from "../pages/MovieDetails/MovieDetail.jsx";
+import { Routes, Route, Navigate } from "react-router-dom";
 import CatalogScreen from "../pages/Catalog/catalog.jsx";
-import HomeScreen from "../pages/Home/home-screen.jsx";
 import MovieDetailsScreen from "../pages/MovieDetails/MovieDetail.jsx";
 import HallPage from "../pages/HallPage/hallPage.jsx";
-
-
-
+import AppLayout from "./providers/layout.jsx";
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<MobileShell />}>
-        <Route path="/" element={<HomeScreen />} />
-
-        {/* Movies */}
+      <Route element={<AppLayout />}>
         <Route path="/catalog/:categoryId" element={<CatalogScreen />} />
-        <Route path="/session/:sessionId" element={<HallPage />} />
-
-
-       <Route path="/event/:eventId" element={<MovieDetailsScreen />} />
+        <Route path="/" element={null} />  {/* пустая страница пока грузится */}
       </Route>
-
+      <Route path="/event/:eventId" element={<MovieDetailsScreen />} />
+      <Route path="/session/:sessionId" element={<HallPage />} />
       <Route path="*" element={<div className="p-4">Not found</div>} />
     </Routes>
   );
