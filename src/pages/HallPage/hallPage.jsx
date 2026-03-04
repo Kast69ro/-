@@ -9,6 +9,8 @@ import {
   selectSeatsStatus,
   selectSeatsError,
 } from "../../features/seats/seatsSlice";
+import { IconButton } from "@mui/material";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 // ─── БРЕНД АКТИВ-БАНКА ────────────────────────────────────────────────────
 const BRAND = {
@@ -255,6 +257,8 @@ export default function HallPage() {
   const status    = useSelector(selectSeatsStatus);
   const error     = useSelector(selectSeatsError);
 
+  
+
   const [activeSessionId, setActiveSessionId] = useState(sessionId);
   const [selectedSeats, setSelectedSeats]     = useState([]);
   const [limitWarning, setLimitWarning]       = useState(false);
@@ -356,17 +360,24 @@ export default function HallPage() {
         borderBottom: `3px solid ${BRAND.red}`,   // красная линия под шапкой
       }}>
         <div style={{ display: "flex", alignItems: "center", marginBottom: 6 }}>
-          <div
-            onClick={() => navigate(-1)}
-            style={{
-              fontSize: 22,
-              color: BRAND.red,
-              cursor: "pointer",
-              paddingRight: 8,
-              fontWeight: 700,
-              lineHeight: 1,
-            }}
-          >←</div>
+             {/* Градиент снизу */}
+        
+
+        {/* Кнопка назад */}
+        <IconButton
+          onClick={() => navigate(-1)}
+          aria-label="Назад"
+          sx={{
+            position: "absolute",
+            top: 14,
+            left: 14,
+            bgcolor: "rgba(255,255,255,0.9)",
+            border: "1px solid #e0e0e0",
+            "&:hover": { bgcolor: "#fff" },
+          }}
+        >
+          <ArrowBackIosNewIcon fontSize="small" />
+        </IconButton>
           <div style={{
             flex: 1,
             fontWeight: 700,

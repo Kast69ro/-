@@ -16,7 +16,6 @@ import {
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import StarIcon from "@mui/icons-material/Star";
 
-
 import {
   fetchEventDetails,
   clearEventDetails,
@@ -35,8 +34,6 @@ export default function MovieDetailsScreen() {
   const status = useSelector(selectEventDetailsStatus);
   const error = useSelector(selectEventDetailsError);
 
-  console.log(movie);
-  
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(
@@ -203,7 +200,14 @@ export default function MovieDetailsScreen() {
 
       {/* ── КОНТЕНТ ── */}
       <Box
-        sx={{ px: 2, mt: 1, display: "flex", flexDirection: "column", gap: 0 }}
+        sx={{
+          px: 2,
+          mt: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+          pb: 7,
+        }} // ← сюда
       >
         {/* Название */}
         <Typography
@@ -229,7 +233,7 @@ export default function MovieDetailsScreen() {
         <Stack
           direction="row"
           spacing={1}
-          sx={{ mb: 2.5, flexWrap: "wrap", gap: 1, justifyContent: "center" }} 
+          sx={{ mb: 2.5, flexWrap: "wrap", gap: 1, justifyContent: "center" }}
         >
           {ageRating && (
             <Chip
@@ -472,8 +476,6 @@ export default function MovieDetailsScreen() {
             </Box>
           </Box>
         )}
-
-      
       </Box>
 
       {/* ── КНОПКА СНИЗУ ── */}
@@ -483,9 +485,9 @@ export default function MovieDetailsScreen() {
           bottom: 0,
           left: 0,
           right: 0,
-          px: 2,
-          py: 3,
-          background: "linear-gradient(to top, #fff 80%, transparent)",
+          px: 3,
+          py: 1,
+          background: "linear-gradient(to top, #fff 70%, transparent)",
           zIndex: 100,
         }}
       >
