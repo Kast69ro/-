@@ -11,24 +11,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 
 import { fetchSeats, selectSeats, selectSeatsStatus, selectSeatsError } from "../../features/seats/seatsSlice";
 
-const theme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: { main: "#22c55e" },
-    secondary: { main: "#a855f7" },
-    warning: { main: "#f59e0b" },
-    background: { default: "#ffffff", paper: "#1f2937" },
-  },
-  typography: {
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-  },
-  shape: { borderRadius: 10 },
-});
 
 function SeatIcon({ color, size = 26 }) {
   return (
@@ -53,7 +39,7 @@ function buildColorMap(seatTypePrice = []) {
   return map;
 }
 
-function Seat({ seat, isSelected, onToggle, colorMap }) {
+function Seat({ seat, isSelected, onToggle, colorMap, isDense }) {
   const booked = seat.bookedSeats === "1";
   const isVip = seat.seatType === "VIP";
 
@@ -61,6 +47,8 @@ function Seat({ seat, isSelected, onToggle, colorMap }) {
   if (booked) color = "#d1d5db";
   else if (isSelected) color = "#22c55e";
   else color = colorMap[seat.seatType] || "#f59e0b";
+
+  const iconSize = isVip ? 28 : 24;
 
   return (
     <Box
@@ -93,7 +81,7 @@ function Seat({ seat, isSelected, onToggle, colorMap }) {
         </Box>
       ) : (
         <Box sx={{ transform: isSelected ? "scale(1.15)" : "scale(1)", transition: "transform 0.1s" }}>
-          <SeatIcon color={color} size={isVip ? 28 : 24} />
+          <SeatIcon color={color} size={iconSize} />
         </Box>
       )}
       {isSelected && !booked && (
@@ -121,7 +109,7 @@ function Seat({ seat, isSelected, onToggle, colorMap }) {
   );
 }
 
-function Row({ rowNum, seats, selectedSeats, onToggle, colorMap, isVip = false }) {
+function Row({ rowNum, seats, selectedSeats, onToggle, colorMap, isVip = false, isDense }) {
   const label = (
     <Box
       sx={{
@@ -137,18 +125,22 @@ function Row({ rowNum, seats, selectedSeats, onToggle, colorMap, isVip = false }
     </Box>
   );
 
+  // gap между местами: больше если зал большой (>100 мест)
+  const seatGap = isDense ? (isVip ? "10px" : "6px") : (isVip ? "6px" : "3px");
+  const rowGap  = isDense ? "6px" : (isVip ? "4px" : "2px");
+
   return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: isVip ? "4px" : "2px",
-        mb: isVip ? "4px" : "1px",
+        gap: isDense ? "6px" : "4px",
+        mb: rowGap,
       }}
     >
       {label}
-      <Box sx={{ display: "flex", gap: isVip ? "6px" : "3px", alignItems: "center" }}>
+      <Box sx={{ display: "flex", gap: seatGap, alignItems: "center" }}>
         {seats.map((seat) => (
           <Seat
             key={seat.seatId}
@@ -156,6 +148,7 @@ function Row({ rowNum, seats, selectedSeats, onToggle, colorMap, isVip = false }
             isSelected={selectedSeats.some((s) => s.seatId === seat.seatId)}
             onToggle={onToggle}
             colorMap={colorMap}
+            isDense={isDense}
           />
         ))}
       </Box>
@@ -221,6 +214,9 @@ export default function SeatMap({
 
   const freeCount = allSeats.filter((s) => s.bookedSeats === "0").length;
 
+  // Если мест больше 100 — увеличиваем расстояние между местами
+  const isDense = allSeats.length > 100;
+
   const toggleSeat = (seat) => {
     setSelectedSeats((prev) =>
       prev.find((s) => s.seatId === seat.seatId)
@@ -237,7 +233,6 @@ export default function SeatMap({
   }));
 
   return (
-    <ThemeProvider theme={theme}>
       <Box
         sx={{
           minHeight: "100vh",
@@ -373,6 +368,7 @@ export default function SeatMap({
                     onToggle={toggleSeat}
                     colorMap={colorMap}
                     isVip={isVip}
+                    isDense={isDense}
                   />
                 );
               })}
@@ -431,6 +427,5 @@ export default function SeatMap({
           </Paper>
         </Slide>
       </Box>
-    </ThemeProvider>
   );
 }

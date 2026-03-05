@@ -14,9 +14,12 @@ const theme = createTheme({
       main: "#E31E24",
     },
   },
+  typography: {
+    fontFamily: 'Montserrat, sans-serif',
+  },
 });
 ReactDOM.createRoot(document.getElementById("root")).render(
-  // <React.StrictMode>
+  <React.StrictMode>
   <ThemeProvider theme={theme}>
     <BrowserRouter>
     <Provider store={store}>  
@@ -24,5 +27,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </Provider>
     </BrowserRouter>
     </ThemeProvider>
-  // </React.StrictMode>
+   </React.StrictMode>
 );
